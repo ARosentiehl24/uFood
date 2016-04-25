@@ -101,8 +101,8 @@ public class HandleFoodActivity extends AppCompatActivity {
 
             cbOnSale.setChecked(food.isInPromotion());
 
-            bAddFood.setVisibility(isInEditMode ? View.INVISIBLE : View.VISIBLE);
-            bUpdateFood.setVisibility(isInEditMode ? View.VISIBLE : View.INVISIBLE);
+            bAddFood.setVisibility(View.INVISIBLE);
+            bUpdateFood.setVisibility(View.VISIBLE);
         }
     }
 

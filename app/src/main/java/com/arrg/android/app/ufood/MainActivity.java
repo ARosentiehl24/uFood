@@ -31,7 +31,7 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<Food> foodArrayList;
+    private ArrayList<Food> foodArrayList = new ArrayList<>();
 
     @Bind(R.id.fabAddFood)
     FloatingActionButton fabAddFood;
@@ -66,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
         Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).sort("name ASC").all();
 
         if (foods != null) {
-            foodArrayList = new ArrayList<>();
-
             Collections.addAll(foodArrayList, foods);
 
             FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
@@ -228,10 +226,12 @@ public class MainActivity extends AppCompatActivity {
     public void loadFoods(ArrayList<Food> foodArrayList) {
         FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
 
-        recyclerView.setAdapter(foodAdapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        if (foodAdapter.getItemCount() > 0) {
+            recyclerView.setAdapter(foodAdapter);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        foodAdapter.notifyDataSetChanged();
+            foodAdapter.notifyDataSetChanged();
+        }
     }
 }

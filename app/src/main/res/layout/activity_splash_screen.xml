@@ -17,21 +17,7 @@
             android:layout_height="108dp"
             android:layout_centerInParent="true"
             android:contentDescription="@null"
-            android:src="@drawable/ic_background_light" />
-
-        <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerInParent="true"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_background_teal_500" />
-
-        <ImageView
-            android:layout_width="92dp"
-            android:layout_height="92dp"
-            android:layout_centerInParent="true"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_restaurant_menu_48dp" />
+            android:src="@mipmap/ic_launcher" />
 
         <TextView
             android:layout_width="wrap_content"
