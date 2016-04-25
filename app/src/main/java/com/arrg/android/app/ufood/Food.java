@@ -20,7 +20,7 @@ public class Food {
     private String kindOfFood;
 
     @Column
-    private long price;
+    private String price;
 
     @Column
     private boolean inPromotion;
@@ -28,7 +28,7 @@ public class Food {
     public Food() {
     }
 
-    public Food(String name, String description, String type, String kindOfFood, long price, boolean inPromotion) {
+    public Food(String name, String description, String type, String kindOfFood, String price, boolean inPromotion) {
         this.name = name;
         this.description = description;
         this.type = type;
@@ -69,11 +69,11 @@ public class Food {
         this.kindOfFood = kindOfFood;
     }
 
-    public long getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(long price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

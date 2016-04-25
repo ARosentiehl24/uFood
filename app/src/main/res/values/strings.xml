@@ -11,4 +11,24 @@
     <string name="action_report">Reports</string>
     <string name="see_all">See All</string>
     <string name="name">Name</string>
+    <string name="add_food">Add Food</string>
+    <string name="there_are_invalid_fields_message">There are invalid fields</string>
+
+    <string-array name="typeOfFood">
+        <item>Meat</item>
+        <item>Chicken</item>
+        <item>Fish</item>
+        <item>Soup</item>
+        <item>Rice</item>
+        <item>Salad</item>
+        <item>Drink</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="kindOfFood">
+        <item>Colombian</item>
+        <item>Mexican</item>
+        <item>Italian</item>
+        <item>Arabic</item>
+    </string-array>
 </resources>

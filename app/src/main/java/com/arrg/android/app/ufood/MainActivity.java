@@ -3,9 +3,11 @@ package com.arrg.android.app.ufood;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +23,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
+
+    private ArrayList<Food> foodArrayList;
 
     @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
@@ -51,15 +55,17 @@ public class MainActivity extends AppCompatActivity {
 
         Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).sort("name ASC").all();
 
-        ArrayList<Food> foodArrayList = new ArrayList<>();
+        foodArrayList = new ArrayList<>();
 
-        Collections.addAll(foodArrayList, foods);
+        if (foods != null) {
+            Collections.addAll(foodArrayList, foods);
 
-        FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
+            FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
 
-        recyclerView.setAdapter(foodAdapter);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            recyclerView.setAdapter(foodAdapter);
+            recyclerView.setHasFixedSize(true);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }
     }
 
     @Override
@@ -77,6 +83,37 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem actionSearch = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(actionSearch);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                newText = newText.toLowerCase();
+
+                ArrayList<Food> filteredFoods = new ArrayList<>();
+
+                for (Food food : foodArrayList) {
+                    if (food.getName().toLowerCase().contains(newText)) {
+                        filteredFoods.add(food);
+                    }
+                }
+
+                FoodSingleAdapter foodSingleAdapter = new FoodSingleAdapter(MainActivity.this, filteredFoods);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                recyclerView.setAdapter(foodSingleAdapter);
+
+                foodSingleAdapter.notifyDataSetChanged();
+
+                return true;
+            }
+        });
+
         return true;
     }
 
@@ -86,6 +123,17 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_see_all:
+                Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).sort("name ASC").all();
+
+                Collections.addAll(foodArrayList, foods);
+
+                FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
+
+                recyclerView.setAdapter(foodAdapter);
+                recyclerView.setHasFixedSize(true);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+                foodAdapter.notifyDataSetChanged();
                 return true;
             case R.id.action_report:
                 return true;
