@@ -1,8 +1,10 @@
 package com.arrg.android.app.ufood;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,9 +13,14 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.Toast;
 
 import com.afollestad.inquiry.Inquiry;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.easyandroidanimations.library.FadeInAnimation;
+import com.easyandroidanimations.library.FadeOutAnimation;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Food> foodArrayList;
 
+    @Bind(R.id.fabAddFood)
+    FloatingActionButton fabAddFood;
+
     @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
 
@@ -35,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.fabAddFood:
-                startActivity(new Intent(this, AddFoodActivity.class));
+                startActivity(new Intent(this, HandleFoodActivity.class));
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
         }
@@ -55,9 +65,9 @@ public class MainActivity extends AppCompatActivity {
 
         Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).sort("name ASC").all();
 
-        foodArrayList = new ArrayList<>();
-
         if (foods != null) {
+            foodArrayList = new ArrayList<>();
+
             Collections.addAll(foodArrayList, foods);
 
             FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
@@ -65,6 +75,26 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setAdapter(foodAdapter);
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                        fabAddFood.show();
+                    }
+
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
+
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                    if (dy > 0 || dy < 0 && fabAddFood.isShown()) {
+                        fabAddFood.hide();
+                    }
+
+                    super.onScrolled(recyclerView, dx, dy);
+                }
+            });
         }
     }
 
@@ -94,22 +124,29 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                newText = newText.toLowerCase();
+                if (newText.length() > 0) {
+                    new FadeOutAnimation(findViewById(R.id.fabAddFood)).animate();
 
-                ArrayList<Food> filteredFoods = new ArrayList<>();
+                    newText = newText.toLowerCase();
 
-                for (Food food : foodArrayList) {
-                    if (food.getName().toLowerCase().contains(newText)) {
-                        filteredFoods.add(food);
+                    ArrayList<Food> filteredFoods = new ArrayList<>();
+
+                    for (Food food : foodArrayList) {
+                        if (food.getName().toLowerCase().contains(newText)) {
+                            filteredFoods.add(food);
+                        }
                     }
+
+                    FoodSingleAdapter foodSingleAdapter = new FoodSingleAdapter(MainActivity.this, filteredFoods);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+                    recyclerView.setAdapter(foodSingleAdapter);
+
+                    foodSingleAdapter.notifyDataSetChanged();
+                } else {
+                    new FadeInAnimation(findViewById(R.id.fabAddFood)).animate();
+
+                    loadFoods(foodArrayList);
                 }
-
-                FoodSingleAdapter foodSingleAdapter = new FoodSingleAdapter(MainActivity.this, filteredFoods);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-                recyclerView.setAdapter(foodSingleAdapter);
-
-                foodSingleAdapter.notifyDataSetChanged();
-
                 return true;
             }
         });
@@ -123,21 +160,56 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_see_all:
-                Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).sort("name ASC").all();
-
-                Collections.addAll(foodArrayList, foods);
-
-                FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
-
-                recyclerView.setAdapter(foodAdapter);
-                recyclerView.setHasFixedSize(true);
-                recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-                foodAdapter.notifyDataSetChanged();
+                loadFoods(foodArrayList);
                 return true;
-            case R.id.action_report:
+            case R.id.action_on_sale:
+                Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).where("inPromotion = ?", 1).sort("name ASC").all();
+
+                if (foods != null) {
+                    ArrayList<Food> filteredFoods = new ArrayList<>();
+
+                    Collections.addAll(filteredFoods, foods);
+
+                    loadFoods(filteredFoods);
+                }
+                return true;
+            case R.id.action_kind_of_food:
+                new MaterialDialog.Builder(this)
+                        .items(R.array.kindOfFood)
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).where("kindOfFood = ?", text.toString()).sort("name ASC").all();
+
+                                if (foods != null) {
+                                    ArrayList<Food> filteredFoods = new ArrayList<>();
+
+                                    Collections.addAll(filteredFoods, foods);
+
+                                    loadFoods(filteredFoods);
+                                } else {
+                                    ArrayList<Food> filteredFoods = new ArrayList<>();
+
+                                    loadFoods(filteredFoods);
+                                }
+                            }
+                        })
+                        .show();
                 return true;
             case R.id.action_about:
+                new AlertDialogWrapper.Builder(this)
+                        .setTitle(R.string.action_about)
+                        .setMessage(getString(R.string.app_name) + " was developed by:\n\n" +
+                                " » Alberto Rosentiehl - 2012114114\n" +
+                                " » Cristian Sarmiento - \n\n" +
+                                " Programming for Android phones\n\n" +
+                                " App Version: v1.0")
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                 return true;
         }
 
@@ -151,5 +223,15 @@ public class MainActivity extends AppCompatActivity {
 
     public void toast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    public void loadFoods(ArrayList<Food> foodArrayList) {
+        FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
+
+        recyclerView.setAdapter(foodAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        foodAdapter.notifyDataSetChanged();
     }
 }

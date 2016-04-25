@@ -57,10 +57,29 @@
             android:background="@color/colorPrimary" />
 
         <TextView
-            android:id="@+id/tvDescription"
+            android:id="@+id/tvTypeOfFood"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/headerDivider"
+            android:text="@string/type_of_food"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvKindOfFood"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTypeOfFood"
+            android:text="@string/kind_of_food"
+            android:textColor="@color/colorPrimary"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvKindOfFood"
+            android:layout_marginTop="10dp"
             android:text="@string/description"
             android:textColor="@color/colorPrimary"
             android:textSize="15sp" />

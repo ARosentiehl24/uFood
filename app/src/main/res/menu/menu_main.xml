@@ -20,7 +20,22 @@
         android:id="@+id/action_report"
         android:orderInCategory="100"
         android:title="@string/action_report"
-        app:showAsAction="never" />
+        app:showAsAction="never">
+
+        <menu>
+            <item
+                android:id="@+id/action_on_sale"
+                android:orderInCategory="100"
+                android:title="@string/on_sale"
+                app:showAsAction="never" />
+
+            <item
+                android:id="@+id/action_kind_of_food"
+                android:orderInCategory="100"
+                android:title="@string/kind_of_food"
+                app:showAsAction="never" />
+        </menu>
+    </item>
 
     <item
         android:id="@+id/action_about"

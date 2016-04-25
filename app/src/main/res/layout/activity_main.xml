@@ -12,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">-->
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <!--</android.support.v4.widget.SwipeRefreshLayout>-->
 
     <android.support.design.widget.FloatingActionButton
@@ -27,8 +27,7 @@
         android:layout_margin="15dp"
         android:onClick="OnClick"
         android:src="@drawable/ic_add_48dp"
-        app:layout_anchor="@+id/recyclerView"
         app:layout_anchorGravity="bottom|end"
-        app:layout_behavior="com.marcoscg.fabscrollanimations.Fade"
+        app:layout_behavior="com.arrg.android.app.ufood.FABScrollBehavior"
         app:rippleColor="@color/ripple_dark" />
 </RelativeLayout>

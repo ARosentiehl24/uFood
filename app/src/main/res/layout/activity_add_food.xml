@@ -4,12 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.arrg.android.app.ufood.AddFoodActivity">
+    tools:context=".HandleFoodActivity">
 
     <ScrollView
-        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="0dp">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -84,11 +84,25 @@
         </LinearLayout>
     </ScrollView>
 
-    <android.support.v7.widget.AppCompatButton
-        android:id="@+id/bAddFood"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="?selectableItemBackground"
-        android:text="@string/add_food"
-        android:textColor="@color/colorPrimary" />
+        android:layout_height="50dp">
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/bUpdateFood"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="?selectableItemBackground"
+            android:text="@string/update_food"
+            android:textColor="@color/colorPrimary"
+            android:visibility="invisible" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/bAddFood"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="?selectableItemBackground"
+            android:text="@string/add_food"
+            android:textColor="@color/colorPrimary" />
+    </RelativeLayout>
 </LinearLayout>

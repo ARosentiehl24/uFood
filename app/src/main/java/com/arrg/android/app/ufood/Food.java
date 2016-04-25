@@ -2,7 +2,9 @@ package com.arrg.android.app.ufood;
 
 import com.afollestad.inquiry.annotations.Column;
 
-public class Food {
+import java.io.Serializable;
+
+public class Food implements Serializable {
 
     @Column(name = "_id", primaryKey = true, notNull = true, autoIncrement = true)
     private long id;
@@ -35,6 +37,14 @@ public class Food {
         this.kindOfFood = kindOfFood;
         this.price = price;
         this.inPromotion = inPromotion;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {

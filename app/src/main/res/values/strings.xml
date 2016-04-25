@@ -13,6 +13,11 @@
     <string name="name">Name</string>
     <string name="add_food">Add Food</string>
     <string name="there_are_invalid_fields_message">There are invalid fields</string>
+    <string name="type_of_food">Type plate</string>
+    <string name="kind_of_food">Kind of food</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="update_food">Update Food</string>
 
     <string-array name="typeOfFood">
         <item>Meat</item>
@@ -30,5 +35,15 @@
         <item>Mexican</item>
         <item>Italian</item>
         <item>Arabic</item>
+    </string-array>
+
+    <string-array name="longClickAction">
+        <item>@string/edit</item>
+        <item>@string/delete</item>
+    </string-array>
+
+    <string-array name="reports">
+        <item>@string/on_sale</item>
+        <item>@string/kind_of_food</item>
     </string-array>
 </resources>

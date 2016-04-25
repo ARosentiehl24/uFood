@@ -2,6 +2,7 @@ package com.arrg.android.app.ufood;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,7 @@ public class FoodSingleAdapter extends RecyclerView.Adapter<FoodSingleAdapter.Vi
         return foodArrayList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @Bind(R.id.tvFoodName)
         TextView tvFoodName;
@@ -55,6 +56,19 @@ public class FoodSingleAdapter extends RecyclerView.Adapter<FoodSingleAdapter.Vi
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Food food = foodArrayList.get(getLayoutPosition());
+
+            Intent intent = new Intent(context, HandleFoodActivity.class);
+            intent.putExtra(Constants.EXTRA_IS_IN_EDIT_MODE, true);
+            intent.putExtra(Constants.FOOD_TABLE, food);
+            context.startActivity(intent);
+            context.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         }
     }
 }

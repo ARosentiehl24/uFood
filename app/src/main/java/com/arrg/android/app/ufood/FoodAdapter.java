@@ -2,12 +2,16 @@ package com.arrg.android.app.ufood;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.afollestad.inquiry.Inquiry;
+import com.afollestad.materialdialogs.AlertDialogWrapper;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -43,9 +47,11 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
 
         holder.onSaleBackground.setVisibility(food.isInPromotion() ? View.VISIBLE : View.INVISIBLE);
         holder.tvFoodName.setText(food.getName());
-        holder.tvDescription.setText(food.getDescription());
+        holder.tvTypeOfFood.setText(String.format("%s: %s", context.getString(R.string.type_of_food), food.getType()));
+        holder.tvKindOfFood.setText(String.format("%s: %s", context.getString(R.string.kind_of_food), food.getKindOfFood()));
+        holder.tvDescription.setText(String.format("%s: %s", context.getString(R.string.description), food.getDescription()));
 
-        String price = NumberFormat.getCurrencyInstance(new Locale("es", "CO")).format(food.getPrice());
+        String price = NumberFormat.getCurrencyInstance(new Locale("es", "CO")).format(Long.parseLong(food.getPrice()));
 
         holder.tvPrice.setText(String.format("%s COP", price));
     }
@@ -65,13 +71,19 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
         notifyItemRemoved(position);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         @Bind(R.id.onSaleBackground)
         CardView onSaleBackground;
 
         @Bind(R.id.tvFoodName)
         TextView tvFoodName;
+
+        @Bind(R.id.tvTypeOfFood)
+        TextView tvTypeOfFood;
+
+        @Bind(R.id.tvKindOfFood)
+        TextView tvKindOfFood;
 
         @Bind(R.id.tvDescription)
         TextView tvDescription;
@@ -83,17 +95,32 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
             super(itemView);
             ButterKnife.bind(this, itemView);
 
-            itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
 
         @Override
-        public void onClick(View v) {
-
-        }
-
-        @Override
         public boolean onLongClick(View v) {
+            new AlertDialogWrapper.Builder(context)
+                    .setTitle(R.string.delete)
+                    .setMessage("Are you sure you want to delete this item?")
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Food food = foodArrayList.get(getLayoutPosition());
+
+                            deleteFood(getLayoutPosition());
+
+                            Inquiry.get().deleteFrom(Constants.FOOD_TABLE, Food.class).where("name = ?", food.getName()).run();
+
+                            dialog.dismiss();
+                        }
+                    }).show();
             return false;
         }
     }
