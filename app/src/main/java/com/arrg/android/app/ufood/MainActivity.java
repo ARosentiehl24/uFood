@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
                         .setTitle(R.string.action_about)
                         .setMessage(getString(R.string.app_name) + " was developed by:\n\n" +
                                 " » Alberto Rosentiehl - 2012114114\n" +
-                                " » Cristian Sarmiento - \n\n" +
+                                " » Cristian Sarmiento - 2012214118\n\n" +
                                 " Programming for Android phones\n\n" +
                                 " App Version: v1.0")
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
