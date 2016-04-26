@@ -3,7 +3,6 @@ package com.arrg.android.app.ufood;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,7 +73,7 @@ public class FoodAdapter extends RecyclerView.Adapter<FoodAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener {
 
         @Bind(R.id.onSaleBackground)
-        CardView onSaleBackground;
+        TextView onSaleBackground;
 
         @Bind(R.id.tvFoodName)
         TextView tvFoodName;

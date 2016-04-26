@@ -14,9 +14,6 @@ import android.widget.Toast;
 
 import com.afollestad.inquiry.Inquiry;
 
-import java.text.NumberFormat;
-import java.util.Locale;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -64,9 +61,11 @@ public class HandleFoodActivity extends AppCompatActivity {
                 if (!haveText(etName) || !haveText(etDescription) || !haveText(etPrice)) {
                     toast(getString(R.string.there_are_invalid_fields_message));
                 } else {
+                    String foodToEdit = getTextFrom(etName);
+
                     Food food = new Food(getTextFrom(etName), getTextFrom(etDescription), getTextFrom(spinnerTypeOfFood), getTextFrom(spinnerKindOfFood), getTextFrom(etPrice), cbOnSale.isChecked());
 
-                    Inquiry.get().update(Constants.FOOD_TABLE, Food.class).values(food).where("name = ?", getTextFrom(etName)).run();
+                    Inquiry.get().update(Constants.FOOD_TABLE, Food.class).values(food).where("name = ?", foodToEdit).run();
                     onBackPressed();
                 }
                 break;
@@ -96,8 +95,9 @@ public class HandleFoodActivity extends AppCompatActivity {
             spinnerKindOfFood.setSelection(getIndexFor(food.getKindOfFood(), R.array.kindOfFood));
             spinnerTypeOfFood.setSelection(getIndexFor(food.getType(), R.array.typeOfFood));
 
-            String price = NumberFormat.getCurrencyInstance(new Locale("es", "CO")).format(Long.parseLong(food.getPrice()));
-            etPrice.setText(String.format("%s COP", price));
+            //String price = NumberFormat.getCurrencyInstance(new Locale("es", "CO")).format(Long.parseLong(food.getPrice()));
+            //etPrice.setText(String.format("%s COP", price));
+            etPrice.setText(food.getPrice());
 
             cbOnSale.setChecked(food.isInPromotion());
 

@@ -31,8 +31,6 @@ import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<Food> foodArrayList = new ArrayList<>();
-
     @Bind(R.id.fabAddFood)
     FloatingActionButton fabAddFood;
 
@@ -63,37 +61,33 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Inquiry.init(this, Constants.DATA_BASE_NAME, 1);
 
-        Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).sort("name ASC").all();
+        FoodAdapter foodAdapter = new FoodAdapter(this, loadFoods());
 
-        if (foods != null) {
-            Collections.addAll(foodArrayList, foods);
+        recyclerView.setAdapter(foodAdapter);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-            FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
-
-            recyclerView.setAdapter(foodAdapter);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-            recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-                @Override
-                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                    if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
-                        fabAddFood.show();
-                    }
-
-                    super.onScrollStateChanged(recyclerView, newState);
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
+                    fabAddFood.show();
                 }
 
-                @Override
-                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                    if (dy > 0 || dy < 0 && fabAddFood.isShown()) {
-                        fabAddFood.hide();
-                    }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
 
-                    super.onScrolled(recyclerView, dx, dy);
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0 || dy < 0 && fabAddFood.isShown()) {
+                    fabAddFood.hide();
                 }
-            });
-        }
+
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+        foodAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -129,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
                     ArrayList<Food> filteredFoods = new ArrayList<>();
 
-                    for (Food food : foodArrayList) {
+                    for (Food food : loadFoods()) {
                         if (food.getName().toLowerCase().contains(newText)) {
                             filteredFoods.add(food);
                         }
@@ -143,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     new FadeInAnimation(findViewById(R.id.fabAddFood)).animate();
 
-                    loadFoods(foodArrayList);
+                    addFoodsToRecycler(loadFoods());
                 }
                 return true;
             }
@@ -158,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (id) {
             case R.id.action_see_all:
-                loadFoods(foodArrayList);
+                addFoodsToRecycler(loadFoods());
                 return true;
             case R.id.action_on_sale:
                 Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).where("inPromotion = ?", 1).sort("name ASC").all();
@@ -168,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Collections.addAll(filteredFoods, foods);
 
-                    loadFoods(filteredFoods);
+                    addFoodsToRecycler(filteredFoods);
                 }
                 return true;
             case R.id.action_kind_of_food:
@@ -184,11 +178,11 @@ public class MainActivity extends AppCompatActivity {
 
                                     Collections.addAll(filteredFoods, foods);
 
-                                    loadFoods(filteredFoods);
+                                    addFoodsToRecycler(filteredFoods);
                                 } else {
                                     ArrayList<Food> filteredFoods = new ArrayList<>();
 
-                                    loadFoods(filteredFoods);
+                                    addFoodsToRecycler(filteredFoods);
                                 }
                             }
                         })
@@ -223,7 +217,19 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    public void loadFoods(ArrayList<Food> foodArrayList) {
+    public ArrayList<Food> loadFoods() {
+        ArrayList<Food> foodArrayList = new ArrayList<>();
+
+        Food[] foods = Inquiry.get().selectFrom(Constants.FOOD_TABLE, Food.class).sort("name ASC").all();
+
+        if (foods != null) {
+            Collections.addAll(foodArrayList, foods);
+        }
+
+        return foodArrayList;
+    }
+
+    public void addFoodsToRecycler(ArrayList<Food> foodArrayList) {
         FoodAdapter foodAdapter = new FoodAdapter(this, foodArrayList);
 
         if (foodAdapter.getItemCount() > 0) {
